@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Enterprise Power Rankings 2026 — Inman</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --red:#CC1F1F;--black:#0f0f0f;--white:#fff;
+  --g1:#f5f4f1;--g2:#e6e4de;--g3:#c8c5bc;--g4:#999;--g5:#777;--g6:#555;
+  --Fd:'Playfair Display',Georgia,serif;
+  --Fb:'DM Sans',system-ui,sans-serif;
+}
+body{font-family:var(--Fb);background:var(--g1);color:var(--black);line-height:1.5}
+
+/* MAIN */
+.wrap{max-width:1020px;margin:0 auto;padding:16px 20px 40px}
+
+/* CONTROLS */
+.controls{background:var(--white);border:1px solid var(--g2);padding:13px 16px;margin-bottom:16px;display:flex;flex-wrap:wrap;gap:14px;align-items:flex-end}
+.cg{display:flex;flex-direction:column;gap:4px}
+.cl{font-size:10px;font-weight:500;letter-spacing:1.5px;text-transform:uppercase;color:var(--g4)}
+.seg{display:flex;border:1px solid var(--g2);overflow:hidden}
+.seg button{font-family:var(--Fb);font-size:12px;font-weight:500;padding:5px 14px;border:none;border-right:1px solid var(--g2);background:transparent;color:var(--g4);cursor:pointer;transition:all .15s;white-space:nowrap}
+.seg button:last-child{border-right:none}
+.seg button.on{background:var(--black);color:#fff}
+.tbtn{display:flex;align-items:center;gap:8px;background:transparent;border:1px solid var(--g2);padding:5px 13px;cursor:pointer;font-family:var(--Fb);font-size:12px;font-weight:500;color:var(--g5);transition:all .15s;white-space:nowrap}
+.tbtn.on{border-color:var(--red);color:var(--red);background:#fff5f5}
+.tdot{width:8px;height:8px;border-radius:50%;background:var(--g3);transition:background .2s;flex-shrink:0}
+.tbtn.on .tdot{background:var(--red)}
+
+/* TABS */
+.vtabs{display:flex;border-bottom:2px solid var(--g2);margin-bottom:16px}
+.vtab{background:transparent;border:none;font-family:var(--Fb);font-size:12px;font-weight:500;color:var(--g4);padding:8px 16px;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-2px;transition:all .15s}
+.vtab.on{color:var(--black);border-bottom-color:var(--black)}
+
+/* PANEL */
+.panel{background:var(--white);border:1px solid var(--g2)}
+.ph{display:flex;justify-content:space-between;align-items:baseline;padding:13px 16px 11px;border-bottom:1px solid var(--g2);flex-wrap:wrap;gap:6px}
+.pt{font-size:13px;font-weight:500}
+.pn{font-size:11px;color:var(--g4)}
+
+/* TABLE */
+.tw{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:12px}
+thead{background:var(--g1)}
+th{padding:7px 10px;text-align:left;font-size:10px;font-weight:500;letter-spacing:1px;text-transform:uppercase;color:var(--g4);border-bottom:2px solid var(--g2);white-space:nowrap;cursor:pointer;user-select:none}
+th:hover{color:var(--black)}
+th.srt{color:var(--black)}
+.arr{font-size:9px;margin-left:2px;opacity:.5}
+th.srt .arr{opacity:1}
+td{padding:8px 10px;border-bottom:1px solid var(--g2);vertical-align:middle}
+tr:last-child td{border-bottom:none}
+tbody tr:hover td{background:var(--g1)}
+.rn{font-size:11px;color:var(--g4);text-align:right;width:28px;padding-right:6px}
+.nc{display:flex;align-items:center;gap:8px}
+.dot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
+.co{font-size:11px;color:var(--g4);margin-top:1px}
+.bw{display:flex;align-items:center;gap:6px;min-width:100px}
+.bt{flex:1;height:4px;background:var(--g2);overflow:hidden}
+.bf{height:100%}
+.nm{white-space:nowrap;font-size:12px}
+.yp{color:#1a6b3a;font-weight:500;font-size:11px;white-space:nowrap}
+.yn{color:#a01717;font-weight:500;font-size:11px;white-space:nowrap}
+.ya{color:var(--g4);font-size:11px}
+.est{font-size:9px;color:var(--g4);vertical-align:super;margin-left:2px}
+.tip{display:inline-flex;align-items:center;justify-content:center;width:13px;height:13px;border-radius:50%;border:1px solid var(--g2);font-size:9px;color:var(--g4);cursor:help;margin-left:3px;flex-shrink:0}
+.tip:hover{background:var(--g2)}
+
+/* YOY BANNER */
+.yoy-banner{background:var(--black);padding:16px 20px;margin-bottom:14px;border-left:3px solid var(--red)}
+.yoy-hl{font-family:var(--Fd);font-size:18px;color:#fff;font-weight:600;margin-bottom:8px;line-height:1.2}
+.yoy-bullets{display:flex;flex-wrap:wrap;gap:14px;margin-top:4px}
+.yb{font-size:12px;color:#777;display:flex;align-items:flex-start;gap:6px;max-width:360px}
+.yb::before{content:'◆';font-size:8px;color:var(--red);margin-top:4px;flex-shrink:0}
+.yb strong{color:#bbb;font-weight:500}
+
+/* MOVERS GRID */
+.movers{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-bottom:16px}
+.mc{background:var(--white);border:1px solid var(--g2);padding:14px}
+.mc h4{font-size:10px;font-weight:500;letter-spacing:1.2px;text-transform:uppercase;color:var(--g4);margin-bottom:10px}
+.mr{display:flex;justify-content:space-between;align-items:baseline;padding:5px 0;border-bottom:1px solid var(--g1);font-size:12px}
+.mr:last-child{border-bottom:none}
+.mn{font-weight:500;font-size:12px}
+.mv-p{color:#1a6b3a;font-weight:500}
+.mv-n{color:#a01717;font-weight:500}
+
+/* INLINE FOOTNOTE (below chart/table panels) */
+.fn{font-size:11px;color:var(--g5);line-height:1.8;padding:12px 16px;background:var(--white);border:1px solid var(--g2);border-top:none}
+.fn strong{color:var(--g6);font-weight:500}
+.fn a{color:var(--g5);text-decoration:underline}
+.fn sup{font-size:9px;vertical-align:super}
+
+@media(max-width:640px){
+  .wrap{padding-left:12px;padding-right:12px}
+  .controls{flex-direction:column;align-items:flex-start}
+  .movers{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <div class="controls">
+    <div class="cg">
+      <span class="cl">View</span>
+      <div class="seg" id="vSeg">
+        <button class="on" onclick="setView('chart')">Chart</button>
+        <button onclick="setView('table')">Table</button>
+        <button onclick="setView('yoy')">Year over year</button>
+      </div>
+    </div>
+    <div class="cg">
+      <span class="cl">Metric</span>
+      <div class="seg" id="mSeg">
+        <button class="on" onclick="setMetric('volume')">Volume</button>
+        <button onclick="setMetric('sides')">Sides</button>
+        <button onclick="setMetric('agents')">Agents</button>
+        <button onclick="setMetric('avgPrice')">Avg price</button>
+      </div>
+    </div>
+    <div class="cg">
+      <span class="cl">Sort</span>
+      <div class="seg" id="sSeg">
+        <button class="on" onclick="setSort('metric')">By metric</button>
+        <button onclick="setSort('yoy')">By YoY change</button>
+        <button onclick="setSort('name')">A–Z</button>
+      </div>
+    </div>
+    <div class="cg" style="margin-left:auto">
+      <span class="cl">Pro-forma views</span>
+      <div style="display:flex;flex-direction:column;gap:6px">
+        <button class="tbtn" id="mergeBtnCompass" onclick="toggleMerger('compass')">
+          <span class="tdot" id="dotCompass"></span>Compass + Anywhere <span style="font-size:10px;color:var(--g4);margin-left:4px">closed Jan 2026</span>
+        </button>
+        <button class="tbtn" id="mergeBtnReal" onclick="toggleMerger('real')">
+          <span class="tdot" id="dotReal"></span>Real + RE/MAX <span style="font-size:10px;color:var(--g4);margin-left:4px">pending H2 2026</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="vtabs">
+    <button class="vtab on" id="vt-chart" onclick="setView('chart')">Chart</button>
+    <button class="vtab" id="vt-table" onclick="setView('table')">Table</button>
+    <button class="vtab" id="vt-yoy" onclick="setView('yoy')">Year over year</button>
+  </div>
+
+  <!-- CHART -->
+  <div id="pChart">
+    <div class="panel">
+      <div class="ph">
+        <span class="pt" id="cTitle">Sales volume — 2025 enterprise production</span>
+        <span class="pn" id="cNote">T3 Sixty 2026 Real Estate Almanac · Enterprise 20</span>
+      </div>
+      <div style="padding:12px 16px 10px;position:relative" id="cWrap"><canvas id="mainC"></canvas></div>
+    </div>
+    <div class="fn" id="cFoot"></div>
+  </div>
+
+  <!-- TABLE -->
+  <div id="pTable" style="display:none">
+    <div class="panel">
+      <div class="ph">
+        <span class="pt">Full Enterprise 20 — click any header to sort</span>
+        <span class="pn">T3 Sixty 2026 Real Estate Almanac · 2025 production</span>
+      </div>
+      <div class="tw">
+        <table>
+          <thead><tr>
+            <th style="width:28px">#</th>
+            <th onclick="sb('name')" id="th-name">Enterprise <span class="arr">↕</span></th>
+            <th onclick="sb('volume')" id="th-volume" class="srt">Volume <span class="arr">↓</span></th>
+            <th onclick="sb('volYoy')" id="th-volYoy">Vol YoY <span class="arr">↕</span></th>
+            <th onclick="sb('sides')" id="th-sides">Sides <span class="arr">↕</span></th>
+            <th onclick="sb('sidesYoy')" id="th-sidesYoy">Sides YoY <span class="arr">↕</span></th>
+            <th onclick="sb('agents')" id="th-agents">Agents <span class="arr">↕</span></th>
+            <th onclick="sb('agentsYoy')" id="th-agentsYoy">Agents YoY <span class="arr">↕</span></th>
+            <th onclick="sb('avgPrice')" id="th-avgPrice">Avg price <span class="arr">↕</span></th>
+          </tr></thead>
+          <tbody id="tbody"></tbody>
+        </table>
+      </div>
+    </div>
+    <div class="fn">
+      <strong>Source:</strong> <a href="https://www.realestatealmanac.com/enterprises" target="_blank">T3 Sixty 2026 Real Estate Almanac · Enterprise 20</a> (April 8, 2026). Used with permission. Volume in millions USD. All figures reflect the 2025 calendar year (January 1 – December 31, 2025); YoY compares to the 2024 calendar year. Agent counts are U.S.-based figures per T3 Sixty. <sup>*</sup> Weichert: partial data supplemented by T3 Sixty research — estimates may differ from actual. <sup>**</sup> Compass: 2025 totals include all company-owned operations including Christie's International Real Estate (owned affiliates) and brokerages acquired during 2025 (@properties, PorchLight, Ansley, Cottingham Chalk, Colorado Homes Realty, Washington Fine Properties) — prior-year comparison not directly equivalent. <strong>Implied avg price</strong> = Volume ÷ Sides. Derived estimate, not audited. <sup>★</sup> Pro-forma (pending close): 2025 production summed — deal announced April 27, 2026, not yet closed. Not an audited combined filing.
+    </div>
+  </div>
+
+  <!-- YOY -->
+  <div id="pYoy" style="display:none">
+    <div class="yoy-banner">
+      <div class="yoy-hl" id="yHL"></div>
+      <div class="yoy-bullets" id="yBL"></div>
+    </div>
+    <div class="movers" id="movers"></div>
+    <div class="panel">
+      <div class="ph">
+        <span class="pt" id="yChartTitle">Year-over-year volume change — 2025 vs 2024</span>
+        <span class="pn">T3 Sixty 2026 Real Estate Almanac</span>
+      </div>
+      <div style="position:relative;padding:12px 16px 10px" id="yWrap"><canvas id="yoyC"></canvas></div>
+    </div>
+    <div class="fn" id="yoyFn">
+      <strong>Year-over-year:</strong> Compares 2025 production (calendar year January 1 – December 31, 2025) to 2024 production (calendar year January 1 – December 31, 2024), as reported in the <a href="https://www.realestatealmanac.com/enterprises" target="_blank">T3 Sixty 2026 Real Estate Almanac</a> (April 8, 2026). Used with permission. <sup>**</sup> Compass YoY not directly equivalent due to acquisitions and CIRE methodology change.
+    </div>
+  </div>
+
+</div>
+
+<script>
+/* ═══════════════════════════════════════════════════════
+   DATA — T3 Sixty 2026 Real Estate Almanac · Enterprise 20
+   April 8, 2026 · Used with permission
+   Volume in $M · sides and agents as reported
+   ═══════════════════════════════════════════════════════ */
+const E = [
+  { rank:1,  name:'Anywhere Real Estate',         city:'Madison, NJ',      est:false, compass:false,
+    volume:557648,  volYoy:4.2,   sides:935344, sidesYoy:-1.5, agents:172228, agentsYoy:-3.9 },
+  { rank:2,  name:'Keller Williams Realty',        city:'Austin, TX',       est:false, compass:false,
+    volume:370723,  volYoy:0,     sides:796658, sidesYoy:-3.9, agents:136511, agentsYoy:-5.9 },
+  { rank:3,  name:'Compass',                       city:'New York, NY',     est:false, compass:true,
+    volume:294586,  volYoy:15.6,  sides:277057, sidesYoy:10.3, agents:43258,  agentsYoy:16.5 },
+  { rank:4,  name:'RE/MAX',                        city:'Denver, CO',       est:false, compass:false,
+    volume:234273,  volYoy:-2.1,  sides:571618, sidesYoy:-4.4, agents:48165,  agentsYoy:-6.1 },
+  { rank:5,  name:'HomeServices of America',       city:'Minneapolis, MN',  est:false, compass:false,
+    volume:197027,  volYoy:-24.9, sides:346727, sidesYoy:-5.5, agents:57717,  agentsYoy:-9.8 },
+  { rank:6,  name:'eXp World Holdings',            city:'Bellingham, WA',   est:false, compass:false,
+    volume:155560,  volYoy:1.9,   sides:343091, sidesYoy:-2,   agents:63410,  agentsYoy:-3 },
+  { rank:7,  name:'The Real Brokerage',            city:'Miami, FL',        est:false, compass:false,
+    volume:65221,   volYoy:53.7,  sides:131047, sidesYoy:45.1, agents:29122,  agentsYoy:20.6 },
+  { rank:8,  name:'Hanna Holdings',               city:'Pittsburgh, PA',   est:false, compass:false,
+    volume:40257,   volYoy:8.9,   sides:106868, sidesYoy:3.8,  agents:13149,  agentsYoy:0.6 },
+  { rank:9,  name:'Douglas Elliman',               city:'New York, NY',     est:false, compass:false,
+    volume:39762,   volYoy:9.3,   sides:21338,  sidesYoy:-2,   agents:5759,   agentsYoy:-7.7 },
+  { rank:10, name:'United Real Estate',            city:'Dallas, TX',       est:false, compass:false,
+    volume:31360,   volYoy:8.9,   sides:68167,  sidesYoy:-0.2, agents:20949,  agentsYoy:-1.8 },
+  { rank:11, name:'HomeSmart',                     city:'Scottsdale, AZ',   est:false, compass:false,
+    volume:32470,   volYoy:4.7,   sides:64791,  sidesYoy:0.5,  agents:24846,  agentsYoy:-0.6 },
+  { rank:12, name:'LPT Realty',                    city:'Lake Mary, FL',    est:false, compass:false,
+    volume:23616,   volYoy:70.4,  sides:61041,  sidesYoy:67.8, agents:21055,  agentsYoy:43.6 },
+  { rank:13, name:'EXIT Realty Corp.',             city:'Mississauga, ON',  est:false, compass:false,
+    volume:18540,   volYoy:-13.6, sides:56391,  sidesYoy:-17.6,agents:17269,  agentsYoy:-17.2 },
+  { rank:14, name:'Weichert Family of Companies',  city:'Morris Plains, NJ',est:true,  compass:false,
+    volume:28000,   volYoy:-3.4,  sides:56300,  sidesYoy:-9,   agents:12500,  agentsYoy:4.2 },
+  { rank:15, name:'Redfin',                        city:'Seattle, WA',      est:false, compass:false,
+    volume:31872,   volYoy:8.1,   sides:50484,  sidesYoy:8.8,  agents:2284,   agentsYoy:14.3 },
+  { rank:16, name:'Side',                          city:'San Francisco, CA',est:false, compass:false,
+    volume:25779,   volYoy:4.8,   sides:28912,  sidesYoy:2.2,  agents:4000,   agentsYoy:6.5 },
+  { rank:17, name:'Fathom Holdings',               city:'Cary, NC',         est:false, compass:false,
+    volume:15710,   volYoy:19.9,  sides:42200,  sidesYoy:14.7, agents:14210,  agentsYoy:-0.6 },
+  { rank:18, name:'Realty Executives',             city:'Phoenix, AZ',      est:false, compass:false,
+    volume:14383,   volYoy:19.9,  sides:37593,  sidesYoy:17.5, agents:4819,   agentsYoy:-16.9 },
+  { rank:19, name:'NextHome',                      city:'Pleasanton, CA',   est:false, compass:false,
+    volume:11499,   volYoy:14.7,  sides:30640,  sidesYoy:13,   agents:5405,   agentsYoy:5.9 },
+  { rank:20, name:'Peerage Realty Partners',       city:'Toronto, ON',      est:false, compass:false,
+    volume:24805,   volYoy:1.2,   sides:24957,  sidesYoy:-1.1, agents:4343,   agentsYoy:-3.6 },
+  { rank:20, name:'William Raveis Real Estate',    city:'Shelton, CT',      est:false, compass:false,
+    volume:17500,   volYoy:4.9,   sides:19128,  sidesYoy:-2.8, agents:4300,   agentsYoy:-0.9 },
+];
+
+/* Compute derived fields */
+E.forEach(r => {
+  r.avgPrice = (r.volume && r.sides) ? Math.round((r.volume * 1e6) / r.sides) : null;
+  r.yoyKey = r.volYoy;
+});
+
+/* Colour palette — large to small by volume rank, warm→cool gradient */
+const PALETTE = [
+  '#0f0f0f','#1a1a2e','#185FA5','#1a5f7a','#1a6b3a',
+  '#c8720a','#c0392b','#4a4a4a','#0C447C','#2e7d32',
+  '#388e3c','#7b4d00','#8e1c4a','#5c3d2e','#cc2128',
+  '#1565C0','#5d4037','#37474f','#4a148c','#00695c','#b71c1c'
+];
+E.forEach((r, i) => { r.color = PALETTE[i % PALETTE.length]; });
+
+/* ── MERGER A: Compass + Anywhere (CLOSED Jan 9, 2026) ────────────────
+   Anywhere Real Estate ($557,648M / 935,344 sides / 172,228 agents)
+   + Compass ($294,586M / 277,057 sides / 43,258 agents)
+   = Compass International Holdings
+   ─────────────────────────────────────────────────────────────────── */
+const MERGED_COMPASS = {
+  rank: 1,
+  name: 'Compass International Holdings',
+  city: 'New York, NY · merger closed Jan 9, 2026',
+  est: false, compass: false, merged: true, mergedId: 'compass',
+  volume:  557648 + 294586,  // $852,234M
+  sides:   935344 + 277057,  // 1,212,401
+  agents:  172228 + 43258,   // 215,486 US agents per T3 Sixty
+  volYoy:  null, sidesYoy: null, agentsYoy: null,
+  color:   '#7a1515',
+  note:    '2025 pro-forma: arithmetic sum of T3 Sixty 2026 Enterprise 20 US figures for Anywhere Real Estate ($557.6B / 935,344 sides / 172,228 US agents) and Compass ($294.6B / 277,057 sides / 43,258 US agents). Merger closed January 9, 2026 (Compass IR / SEC Form 8-K). Not an audited combined filing. YoY not shown.'
+};
+MERGED_COMPASS.avgPrice = Math.round((MERGED_COMPASS.volume * 1e6) / MERGED_COMPASS.sides);
+
+/* ── MERGER B: Real + RE/MAX (PENDING close H2 2026) ─────────────────
+   The Real Brokerage ($65,221M / 131,047 sides / 29,122 agents)
+   + RE/MAX ($234,273M / 571,618 sides / 48,165 agents)
+   = Real REMAX Group (NASDAQ: REAX)
+   Deal announced April 27, 2026.
+   ─────────────────────────────────────────────────────────────────── */
+const MERGED_REAL = {
+  rank: 4,
+  name: 'Real REMAX Group',
+  city: 'Miami, FL · deal announced Apr 27, 2026 — pending H2 2026',
+  est: false, compass: false, merged: true, mergedId: 'real',
+  volume:  65221 + 234273,   // $299,494M
+  sides:   131047 + 571618,  // 702,665
+  agents:  29122 + 48165,    // 77,287 US agents per T3 Sixty
+  volYoy:  null, sidesYoy: null, agentsYoy: null,
+  color:   '#1a3a6b',
+  note:    '2025 pro-forma: arithmetic sum of T3 Sixty 2026 Enterprise 20 US figures for The Real Brokerage ($65.2B / 131,047 sides / 29,122 US agents) and RE/MAX ($234.3B / 571,618 sides / 48,165 US agents). Deal announced April 27, 2026 — NOT yet closed. Expected close H2 2026, pending regulatory and shareholder approvals. Combined entity: Real REMAX Group (NASDAQ: REAX), HQ Miami. Company-announced figures: 180,000+ agents globally, ~$2.3B pro-forma 2025 revenue. Source: BusinessWire / Real Brokerage press release April 27, 2026.'
+};
+MERGED_REAL.avgPrice = Math.round((MERGED_REAL.volume * 1e6) / MERGED_REAL.sides);
+
+/* ═══════════════ STATE */
+let view = 'chart', metric = 'volume', sortMode = 'metric';
+let mergerCompass = false, mergerReal = false;
+let sortKey = 'volume', sortAsc = false;
+let mainChart = null, yoyChart = null;
+
+const MC = {
+  volume:  { label:'Sales volume', fmt: v => '$' + (v/1000).toFixed(1) + 'B', tick: v => '$' + (v/1000).toFixed(0) + 'B', acc: r => r.volume, yoyAcc: r => r.volYoy },
+  sides:   { label:'Transaction sides', fmt: v => Math.round(v).toLocaleString(), tick: v => (v/1000).toFixed(0)+'K', acc: r => r.sides, yoyAcc: r => r.sidesYoy },
+  agents:  { label:'Agent count', fmt: v => Math.round(v).toLocaleString(), tick: v => (v/1000).toFixed(0)+'K', acc: r => r.agents, yoyAcc: r => r.agentsYoy },
+  avgPrice:{ label:'Implied avg sale price', fmt: v => '$' + (v/1000).toFixed(0) + 'K', tick: v => '$' + (v/1000).toFixed(0) + 'K', acc: r => r.avgPrice, yoyAcc: r => null },
+};
+
+/* ═══════════════ HELPERS */
+const COMPASS_NAMES = ['Anywhere Real Estate','Compass'];
+const REAL_NAMES    = ['The Real Brokerage','RE/MAX'];
+
+function buildSrc() {
+  let rows = [...E];
+  if (mergerCompass) rows = rows.filter(r => !COMPASS_NAMES.includes(r.name));
+  if (mergerReal)    rows = rows.filter(r => !REAL_NAMES.includes(r.name));
+  if (mergerCompass) rows = [MERGED_COMPASS, ...rows];
+  if (mergerReal)    rows = [MERGED_REAL, ...rows];
+  return rows;
+}
+
+function activeData() {
+  const cfg = MC[metric];
+  let d = buildSrc().filter(r => cfg.acc(r) != null);
+  if (sortMode === 'metric') d = d.sort((a, b) => cfg.acc(b) - cfg.acc(a));
+  else if (sortMode === 'yoy') d = d.sort((a, b) => {
+    const ay = cfg.yoyAcc(a), by = cfg.yoyAcc(b);
+    if (ay == null) return 1; if (by == null) return -1;
+    return by - ay;
+  });
+  else d = d.sort((a, b) => a.name.localeCompare(b.name));
+  return d;
+}
+
+function tableSorted() {
+  return buildSrc().sort((a, b) => {
+    let av = a[sortKey], bv = b[sortKey];
+    if (av == null) av = sortAsc ? Infinity : -Infinity;
+    if (bv == null) bv = sortAsc ? Infinity : -Infinity;
+    if (typeof av === 'string') return sortAsc ? av.localeCompare(bv) : bv.localeCompare(av);
+    return sortAsc ? av - bv : bv - av;
+  });
+}
+
+function toggleMerger(which) {
+  if (which === 'compass') {
+    mergerCompass = !mergerCompass;
+    document.getElementById('mergeBtnCompass').classList.toggle('on', mergerCompass);
+    document.getElementById('dotCompass').style.background = mergerCompass ? '#7a1515' : '';
+  } else {
+    mergerReal = !mergerReal;
+    document.getElementById('mergeBtnReal').classList.toggle('on', mergerReal);
+    document.getElementById('dotReal').style.background = mergerReal ? '#1a3a6b' : '';
+  }
+  if (view === 'chart') renderChart();
+  if (view === 'table') renderTable();
+  if (view === 'yoy')   renderYoy();
+}
+
+function yoySpan(v, suffix='%') {
+  if (v == null) return `<span class="ya">—</span>`;
+  return `<span class="${v >= 0 ? 'yp' : 'yn'}">${v >= 0 ? '+' : ''}${v.toFixed(1)}${suffix}</span>`;
+}
+
+const FN = `<strong>Source:</strong> <a href="https://www.realestatealmanac.com/enterprises" target="_blank">T3 Sixty 2026 Real Estate Almanac · Enterprise 20</a> (April 8, 2026). Used with permission. All figures reflect the 2025 calendar year (January 1 – December 31, 2025). Enterprise figures combine owned and franchised office production under one corporate umbrella. Agent counts are U.S.-based per T3 Sixty. <sup>*</sup> Weichert: partial data, T3 Sixty supplemented — estimates may differ from actual. <sup>**</sup> Compass: 2025 totals include Christie's International Real Estate (owned affiliates) and brokerages acquired during 2025 (@properties, PorchLight, Ansley, Cottingham Chalk, Colorado Homes Realty, Washington Fine Properties) — YoY not directly equivalent.`;
+
+/* ═══════════════ SETTERS */
+function setView(v) {
+  view = v;
+  ['chart','table','yoy'].forEach(t => {
+    document.getElementById('p' + t.charAt(0).toUpperCase() + t.slice(1)).style.display = v === t ? '' : 'none';
+    const b = document.getElementById('vt-' + t); if (b) b.classList.toggle('on', v === t);
+  });
+  document.querySelectorAll('#vSeg button').forEach((b, i) => b.classList.toggle('on', ['chart','table','yoy'][i] === v));
+  if (v === 'chart') renderChart();
+  if (v === 'table') renderTable();
+  if (v === 'yoy')   renderYoy();
+}
+
+function setMetric(m) {
+  metric = m;
+  document.querySelectorAll('#mSeg button').forEach((b, i) => b.classList.toggle('on', ['volume','sides','agents','avgPrice'][i] === m));
+  if (view === 'chart') renderChart();
+  if (view === 'yoy')   renderYoy();
+}
+
+function setSort(s) {
+  sortMode = s;
+  document.querySelectorAll('#sSeg button').forEach((b, i) => b.classList.toggle('on', ['metric','yoy','name'][i] === s));
+  if (view === 'chart') renderChart();
+}
+
+function sb(k) {
+  if (sortKey === k) sortAsc = !sortAsc; else { sortKey = k; sortAsc = false; }
+  document.querySelectorAll('th[id^="th-"]').forEach(th => { th.classList.remove('srt'); const a = th.querySelector('.arr'); if (a) a.textContent = '↕'; });
+  const th = document.getElementById('th-' + k);
+  if (th) { th.classList.add('srt'); const a = th.querySelector('.arr'); if (a) a.textContent = sortAsc ? '↑' : '↓'; }
+  renderTable();
+}
+
+/* ═══════════════ CHART */
+function renderChart() {
+  const cfg = MC[metric];
+  const d = activeData();
+  const h = Math.max(420, d.length * 52 + 80);
+  document.getElementById('cWrap').style.height = h + 'px';
+  const mergerLabel = (mergerCompass && mergerReal) ? ' — both pro-forma views active' : mergerCompass ? ' — Compass International Holdings pro-forma' : mergerReal ? ' — Real REMAX Group pro-forma' : '';
+  document.getElementById('cTitle').textContent = cfg.label + ' — 2025 enterprise production' + mergerLabel;
+
+  const dk = matchMedia('(prefers-color-scheme:dark)').matches;
+  const gc = dk ? 'rgba(255,255,255,.06)' : 'rgba(0,0,0,.05)';
+  const tc = dk ? '#888' : '#777';
+
+  if (mainChart) { mainChart.destroy(); mainChart = null; }
+  mainChart = new Chart(document.getElementById('mainC'), {
+    type: 'bar',
+    data: {
+      labels: d.map(r => r.merged ? r.name + ' ★' : r.name),
+      datasets: [{
+        data: d.map(r => cfg.acc(r) || 0),
+        backgroundColor: d.map(r => r.color + 'cc'),
+        hoverBackgroundColor: d.map(r => r.color),
+        borderWidth: 0, borderRadius: 3, barThickness: 24,
+      }]
+    },
+    options: {
+      indexAxis: 'y', responsive: true, maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: { callbacks: {
+          label: ctx => '  ' + cfg.fmt(ctx.raw),
+          afterLabel: ctx => {
+            const r = d[ctx.dataIndex]; if (!r) return '';
+            if (r.merged && r.mergedId === 'compass') return ['  2025 pro-forma · merger closed Jan 9, 2026', '  Anywhere Real Estate ($557.6B) + Compass ($294.6B)', '  Compass International Holdings'];
+            if (r.merged && r.mergedId === 'real')    return ['  2025 pro-forma · deal announced Apr 27, 2026', '  The Real Brokerage ($65.2B) + RE/MAX ($234.3B)', '  Real REMAX Group — pending close H2 2026'];
+            const yoy = cfg.yoyAcc(r);
+            const yoyStr = yoy != null ? '  YoY: ' + (yoy >= 0 ? '+' : '') + yoy.toFixed(1) + '%' : '';
+            return ['  ' + r.city, yoyStr].filter(Boolean).join('\n');
+          }
+        }}
+      },
+      scales: {
+        x: { grid: { color: gc }, ticks: { color: tc, font: { size: 11 }, callback: v => cfg.tick(v) }, border: { display: false } },
+        y: { grid: { display: false }, ticks: {
+          color: ctx => {
+            const r = d[ctx.index];
+            return r && r.merged ? (dk ? '#f88' : '#7a1515') : tc;
+          },
+          font: ctx => {
+            const r = d[ctx.index];
+            return { size: 12, weight: r && r.merged ? '500' : '400' };
+          },
+          autoSkip: false
+        }, border: { display: false } }
+      },
+      layout: { padding: { right: 24, top: 4 } }
+    }
+  });
+
+  const mergerFN = [
+    mergerCompass ? ' <strong>★ Compass International Holdings (closed):</strong> Arithmetic sum of T3 Sixty 2026 Enterprise 20 U.S. figures: Anywhere Real Estate ($557.6B / 935,344 sides / 172,228 agents) + Compass ($294.6B / 277,057 sides / 43,258 agents). Merger closed January 9, 2026 (SEC Form 8-K). Not an audited combined filing.' : '',
+    mergerReal    ? ' <strong>★ Real REMAX Group (pending):</strong> Arithmetic sum of T3 Sixty 2026 Enterprise 20 U.S. figures: The Real Brokerage ($65.2B / 131,047 sides / 29,122 agents) + RE/MAX ($234.3B / 571,618 sides / 48,165 agents). Deal announced April 27, 2026 — not yet closed, expected H2 2026, pending regulatory and shareholder approvals. Source: <a href="https://www.businesswire.com/news/home/20260426359658/en/Real-to-Acquire-REMAX-Creating-a-Leading-Technology-Enabled-Global-Real-Estate-Platform" target="_blank">BusinessWire, April 27, 2026</a>.' : '',
+  ].join('');
+  document.getElementById('cFoot').innerHTML = FN + mergerFN;
+}
+
+/* ═══════════════ TABLE */
+function renderTable() {
+  const d = tableSorted();
+  const mv = Math.max(...d.map(r => r.volume || 0));
+  document.getElementById('tbody').innerHTML = d.map((r, i) => {
+    const pct = ((r.volume || 0) / mv * 100).toFixed(0);
+    const avgFmt = r.avgPrice ? '$' + (r.avgPrice / 1000).toFixed(0) + 'K' : '—';
+    const estMark = r.est ? '<sup class="est">*</sup>' : '';
+    const compMark = r.compass ? '<sup class="est">**</sup>' : '';
+    const mergedMark = r.merged ? '<sup class="est">★</sup>' : '';
+    const tipText = r.merged ? r.note
+      : (r.est ? '* Partial data — T3 Sixty supplemented with additional research. ' : '')
+      + (r.compass ? '** Compass YoY not directly comparable due to Christie\'s International Real Estate methodology change.' : '');
+    const tp = (r.est || r.compass || r.merged) ? `<span class="tip" title="${tipText.replace(/"/g,"'")}">?</span>` : '';
+    const trStyle = r.merged ? ' style="background:#fff8f8"' : '';
+    const nameStyle = r.merged ? 'font-weight:500;font-size:12px;color:#7a1515' : 'font-weight:500;font-size:12px';
+    return `<tr${trStyle}>
+      <td class="rn">${i + 1}</td>
+      <td>
+        <div class="nc"><span class="dot" style="background:${r.color}"></span>
+          <div><div style="${nameStyle}">${r.name}${estMark}${compMark}${mergedMark}${tp}</div><div class="co">${r.city}</div></div>
+        </div>
+      </td>
+      <td>
+        <div class="bw"><div class="bt"><div class="bf" style="width:${pct}%;background:${r.color}"></div></div>
+        <span class="nm">$${(r.volume / 1000).toFixed(1)}B</span></div>
+      </td>
+      <td>${r.merged ? '<span class="ya">pro-forma</span>' : yoySpan(r.volYoy)}</td>
+      <td class="nm">${r.sides != null ? r.sides.toLocaleString() : '—'}</td>
+      <td>${r.merged ? '<span class="ya">pro-forma</span>' : yoySpan(r.sidesYoy)}</td>
+      <td class="nm">${r.agents != null ? r.agents.toLocaleString() : '—'}</td>
+      <td>${r.merged ? '<span class="ya">pro-forma</span>' : yoySpan(r.agentsYoy)}</td>
+      <td class="nm">${avgFmt}</td>
+    </tr>`;
+  }).join('');
+}
+
+/* ═══════════════ YOY */
+function renderYoy() {
+  const cfg = MC[metric];
+  if (!cfg.yoyAcc(E[0])) {
+    document.getElementById('yHL').textContent = 'Year-over-year data not available for implied average price.';
+    document.getElementById('yBL').innerHTML = '';
+    document.getElementById('movers').innerHTML = '';
+    document.getElementById('yWrap').style.height = '80px';
+    if (yoyChart) { yoyChart.destroy(); yoyChart = null; }
+    return;
+  }
+
+  document.getElementById('yChartTitle').textContent = cfg.label + ' — year-over-year change, 2025 vs 2024';
+
+  const d = E.filter(r => cfg.yoyAcc(r) != null).sort((a, b) => cfg.yoyAcc(b) - cfg.yoyAcc(a));
+  const leader = d[0];
+  const bigDecliner = [...d].sort((a, b) => cfg.yoyAcc(a) - cfg.yoyAcc(b))[0];
+    leader.name + ' leads with +' + cfg.yoyAcc(leader).toFixed(1) + '% ' + cfg.label.toLowerCase() + ' growth — the standout mover in the 2026 Enterprise 20';
+
+  const bullets = [];
+  bullets.push(`<strong>${leader.name}</strong> posted +${cfg.yoyAcc(leader).toFixed(1)}% — well ahead of all other enterprises`);
+  if (d[1]) bullets.push(`<strong>${d[1].name}</strong> was second at +${cfg.yoyAcc(d[1]).toFixed(1)}%`);
+  const decliners = d.filter(r => cfg.yoyAcc(r) < 0);
+  if (decliners.length) bullets.push(`${decliners.length} enterprise${decliners.length > 1 ? 's' : ''} declined: ${decliners.map(r => r.name).join(', ')}`);
+  if (bigDecliner && cfg.yoyAcc(bigDecliner) < 0) bullets.push(`<strong>${bigDecliner.name}</strong> saw the steepest drop at ${cfg.yoyAcc(bigDecliner).toFixed(1)}%`);
+
+  document.getElementById('yBL').innerHTML = bullets.map(b => `<div class="yb">${b}</div>`).join('');
+
+  const gainers = d.filter(r => cfg.yoyAcc(r) > 0).slice(0, 5);
+  const decl = [...d].filter(r => cfg.yoyAcc(r) < 0).sort((a, b) => cfg.yoyAcc(a) - cfg.yoyAcc(b)).slice(0, 5);
+
+  function mCard(title, items, vFn, cls) {
+    if (!items.length) return '';
+    return `<div class="mc"><h4>${title}</h4>${items.map(r => `<div class="mr"><span class="mn">${r.name}</span><span class="${cls}">${vFn(r)}</span></div>`).join('')}</div>`;
+  }
+  document.getElementById('movers').innerHTML =
+    mCard('Biggest gainers', gainers, r => '+' + cfg.yoyAcc(r).toFixed(1) + '%', 'mv-p') +
+    (decl.length ? mCard('Declines', decl, r => cfg.yoyAcc(r).toFixed(1) + '%', 'mv-n') : '');
+
+  const h = Math.max(240, d.length * 46 + 60);
+  const mergerNote = (mergerCompass || mergerReal) ? '<strong>Note:</strong> Pro-forma rows are excluded from this view — merged entities had separate pre-merger growth trajectories. Toggle off pro-forma views to compare all companies individually.' : '';
+  document.getElementById('yWrap').style.height = h + 'px';
+  document.querySelector('#pYoy .fn').innerHTML = `<strong>Year-over-year:</strong> 2025 vs 2024 production as reported in the T3 Sixty 2026 Real Estate Almanac (April 8, 2026). Used with permission. <sup>**</sup> Compass YoY comparison not directly equivalent due to Christie's International Real Estate methodology change. ${mergerNote}`;
+  const dk = matchMedia('(prefers-color-scheme:dark)').matches;
+  if (yoyChart) { yoyChart.destroy(); yoyChart = null; }
+  yoyChart = new Chart(document.getElementById('yoyC'), {
+    type: 'bar',
+    data: {
+      labels: d.map(r => r.name),
+      datasets: [{
+        data: d.map(r => cfg.yoyAcc(r)),
+        backgroundColor: d.map(r => cfg.yoyAcc(r) >= 0 ? r.color + 'cc' : '#a01717cc'),
+        hoverBackgroundColor: d.map(r => cfg.yoyAcc(r) >= 0 ? r.color : '#a01717'),
+        borderWidth: 0, borderRadius: 3, barThickness: 20,
+      }]
+    },
+    options: {
+      indexAxis: 'y', responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => '  ' + (ctx.raw >= 0 ? '+' : '') + ctx.raw.toFixed(1) + '%' } } },
+      scales: {
+        x: { grid: { color: dk ? 'rgba(255,255,255,.06)' : 'rgba(0,0,0,.05)' }, ticks: { color: dk ? '#888' : '#777', font: { size: 11 }, callback: v => v + '%' }, border: { display: false } },
+        y: { grid: { display: false }, ticks: { color: dk ? '#888' : '#777', font: { size: 12 }, autoSkip: false }, border: { display: false } }
+      },
+      layout: { padding: { right: 24, top: 4 } }
+    }
+  });
+}
+
+setView('chart');
+
+/* ── AUTO-RESIZE: report true document height to parent iframe ── */
+function reportHeight() {
+  window.parent.postMessage({ height: document.body.scrollHeight }, '*');
+}
+if (window.ResizeObserver) {
+  new ResizeObserver(reportHeight).observe(document.body);
+} else {
+  /* Fallback for older browsers */
+  window.addEventListener('load', reportHeight);
+  window.addEventListener('resize', reportHeight);
+  setInterval(reportHeight, 600);
+}
+</script>
+</body>
+</html>
