@@ -319,7 +319,7 @@ MERGED_REAL.avgPrice = Math.round((MERGED_REAL.volume * 1e6) / MERGED_REAL.sides
 
 /* ═══════════════ STATE */
 let view = 'chart', metric = 'volume', sortMode = 'metric';
-let mergerCompass = false, mergerReal = false;
+let mergerCompass = true, mergerReal = true;
 let sortKey = 'volume', sortAsc = false;
 let mainChart = null, yoyChart = null;
 
@@ -594,6 +594,12 @@ function renderYoy() {
 }
 
 setView('chart');
+
+/* Apply default active states for both merger toggles */
+document.getElementById('mergeBtnCompass').classList.add('on');
+document.getElementById('dotCompass').style.background = '#7a1515';
+document.getElementById('mergeBtnReal').classList.add('on');
+document.getElementById('dotReal').style.background = '#1a3a6b';
 
 /* ── AUTO-RESIZE: report true document height to parent iframe ── */
 function reportHeight() {
